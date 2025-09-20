@@ -1,0 +1,187 @@
+/* Vertical Card Swiper Styles */
+
+.vertical-card-swiper {
+  --swiper-theme-color: #FFD700;
+}
+
+.vertical-card-swiper .swiper-wrapper {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.vertical-card-swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.vertical-card-swiper .swiper-slide-active {
+  z-index: 10;
+}
+
+.vertical-card-swiper .swiper-slide-next {
+  z-index: 9;
+}
+
+.vertical-card-swiper .swiper-slide-prev {
+  z-index: 8;
+}
+
+/* Custom card content styling */
+.card-content {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+}
+
+/* Swipe animation classes */
+.card-content.swipe-left {
+  animation: swipeLeft 0.3s ease-out forwards;
+}
+
+.card-content.swipe-right {
+  animation: swipeRight 0.3s ease-out forwards;
+}
+
+.card-content.swipe-up {
+  animation: swipeUp 0.3s ease-out forwards;
+}
+
+/* Swipe animations */
+@keyframes swipeLeft {
+  0% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%) rotate(-15deg) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeRight {
+  0% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) rotate(15deg) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeUp {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* Swipe indicators */
+.swipe-indicator-left,
+.swipe-indicator-right,
+.swipe-indicator-up {
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+.card-content.swipe-left .swipe-indicator-left {
+  opacity: 1 !important;
+}
+
+.card-content.swipe-right .swipe-indicator-right {
+  opacity: 1 !important;
+}
+
+.card-content.swipe-up .swipe-indicator-up {
+  opacity: 1 !important;
+}
+
+/* Enhanced 3D perspective */
+.perspective-1000 {
+  perspective: 1000px;
+  perspective-origin: center center;
+}
+
+/* Card stack depth effect */
+.vertical-card-swiper .swiper-slide:not(.swiper-slide-active) {
+  filter: brightness(0.8);
+}
+
+.vertical-card-swiper .swiper-slide:not(.swiper-slide-active):not(.swiper-slide-next) {
+  filter: brightness(0.6);
+}
+
+/* Smooth transitions for card changes */
+.vertical-card-swiper .swiper-slide {
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+/* Custom shadow effects for depth */
+.vertical-card-swiper .swiper-slide-shadow-cards {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  border-radius: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .vertical-card-swiper {
+    --swiper-cards-offset: 6px;
+    --swiper-cards-rotate: 1deg;
+  }
+}
+
+@media (max-width: 480px) {
+  .vertical-card-swiper {
+    --swiper-cards-offset: 4px;
+    --swiper-cards-rotate: 0.5deg;
+  }
+}
+
+/* Touch feedback */
+.vertical-card-swiper .swiper-slide-active .card-content:active {
+  transform: scale(0.98);
+}
+
+/* Loading state */
+.card-content img {
+  transition: opacity 0.3s ease;
+}
+
+.card-content img[loading] {
+  opacity: 0.8;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .card-content,
+  .vertical-card-swiper .swiper-slide {
+    transition: none;
+  }
+  
+  .card-content.swipe-left,
+  .card-content.swipe-right,
+  .card-content.swipe-up {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Focus states for accessibility */
+.vertical-card-swiper:focus-within .swiper-slide-active {
+  outline: 2px solid #FFD700;
+  outline-offset: 4px;
+}

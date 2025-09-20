@@ -1,0 +1,60 @@
+{
+  "name": "CraftStory - Artisan Marketplace",
+  "short_name": "CraftStory",
+  "description": "Voice-guided platform connecting Indian artisans with art explorers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F6",
+  "theme_color": "#C9A227",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "lifestyle", "social"],
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Craft",
+      "short_name": "Upload",
+      "description": "Upload a new craft with voice guidance",
+      "url": "/artisan/upload",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Explore Crafts",
+      "short_name": "Explore",
+      "description": "Discover amazing crafts from artisans",
+      "url": "/explore",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
