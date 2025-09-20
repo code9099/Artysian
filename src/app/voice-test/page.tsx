@@ -43,7 +43,7 @@ export default function VoiceTestPage() {
                   Voice Onboard Test
                 </h3>
                 <p className="text-brown mb-6">
-                  Test the artisan voice onboarding flow with AI questions
+                  Test the traditional Q&A voice onboarding flow
                 </p>
                 <Button
                   onClick={() => setCurrentTest('voice-onboard')}

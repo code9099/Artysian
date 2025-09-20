@@ -359,6 +359,67 @@ class AuthService {
   }
 
   /**
+   * Check if user can upload crafts (not guest)
+   */
+  canUploadCrafts(user: User | null): boolean {
+    return user !== null && !user.isGuest;
+  }
+
+  /**
+   * Check if user can save favorites (not guest)
+   */
+  canSaveFavorites(user: User | null): boolean {
+    return user !== null && !user.isGuest;
+  }
+
+  /**
+   * Check if user has completed onboarding
+   */
+  hasCompletedOnboarding(user: User | null): boolean {
+    return user !== null && !!user.role && !!user.languageCode;
+  }
+
+  /**
+   * Mark tutorial as completed for user
+   */
+  async markTutorialCompleted(userId: string): Promise<void> {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        completedTutorial: true,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Error marking tutorial complete:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if user has completed tutorial
+   */
+  hasCompletedTutorial(user: User | null): boolean {
+    if (!user || user.isGuest) {
+      return localStorage.getItem('craftstory_guest_tutorial_completed') === 'true';
+    }
+    return (user as any).completedTutorial || false;
+  }
+
+  /**
+   * Get user permissions
+   */
+  getUserPermissions(user: User | null) {
+    return {
+      canUploadCrafts: this.canUploadCrafts(user),
+      canSaveFavorites: this.canSaveFavorites(user),
+      canAccessArtisanFeatures: user?.role === 'artisan' && !user.isGuest,
+      canAccessExplorerFeatures: user?.role === 'explorer' || user?.isGuest,
+      hasCompletedOnboarding: this.hasCompletedOnboarding(user),
+      hasCompletedTutorial: this.hasCompletedTutorial(user),
+    };
+  }
+
+  /**
    * Cleanup auth listener
    */
   cleanup(): void {

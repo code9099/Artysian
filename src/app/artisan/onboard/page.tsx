@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { VoiceOnboard } from '@/components/VoiceOnboard';
-import { RealTimeVoiceAssistant } from '@/components/RealTimeVoiceAssistant';
 import { ProductVoiceOnboard } from '@/components/ProductVoiceOnboard';
 import { UploadCamera } from '@/components/UploadCamera';
 import { ArtisanTutorial } from '@/components/ArtisanTutorial';
@@ -197,46 +196,10 @@ export default function ArtisanOnboardPage() {
                 <div className="space-y-6">
                   <div className="text-center mb-6">
                     <h3 className="text-2xl font-bold text-charcoal mb-2 font-serif">
-                      Real-Time Voice Conversation
+                      Tell Us About Your Craft
                     </h3>
                     <p className="text-brown">
-                      Have a natural conversation with our AI assistant - microphone stays on, real-time responses
-                    </p>
-                  </div>
-                  
-                  <RealTimeVoiceAssistant
-                    onComplete={(profile) => {
-                      localStorage.setItem('craftstory_artisan_profile', JSON.stringify(profile));
-                      setCurrentStep(3);
-                    }}
-                    userId={user?.uid || 'demo-user'}
-                    context="artisan_onboarding"
-                  />
-                  
-                  {/* Alternative: Traditional Voice Onboard */}
-                  <div className="text-center mt-6">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        // Show traditional voice onboard instead
-                        setCurrentStep(2.5); // We'll handle this
-                      }}
-                      className="border-brown text-brown hover:bg-brown hover:text-cream"
-                    >
-                      Use Traditional Q&A Instead
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {currentStep === 2.5 && (
-                <div className="space-y-6">
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-charcoal mb-2 font-serif">
-                      Traditional Voice Q&A
-                    </h3>
-                    <p className="text-brown">
-                      Answer questions one by one with our structured approach
+                      Our AI assistant will ask you questions about your craft and experience
                     </p>
                   </div>
                   
@@ -247,16 +210,6 @@ export default function ArtisanOnboardPage() {
                     }}
                     userId={user?.uid || 'demo-user'}
                   />
-                  
-                  <div className="text-center mt-6">
-                    <Button
-                      variant="outline"
-                      onClick={() => setCurrentStep(2)}
-                      className="border-gold text-gold hover:bg-gold hover:text-charcoal"
-                    >
-                      Try Real-Time Voice Instead
-                    </Button>
-                  </div>
                 </div>
               )}
 
