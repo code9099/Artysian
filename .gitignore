@@ -49,6 +49,7 @@ service-account.json
 # Functions
 functions/lib/
 functions/node_modules/
+functions/.next/
 
 # IDE
 .vscode/

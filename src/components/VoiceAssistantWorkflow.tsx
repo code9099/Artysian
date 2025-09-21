@@ -76,32 +76,40 @@ export function VoiceAssistantWorkflow({
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
+    console.log('📸 Files selected:', files.length);
     setSelectedFiles(files);
+    
+    // Show loading state
+    toast.info('Uploading photos...');
     
     // Upload files to Firebase Storage
     try {
-      const uploadPromises = files.map(async (file) => {
+      const uploadPromises = files.map(async (file, index) => {
+        console.log(`📤 Uploading file ${index + 1}:`, file.name);
         const timestamp = Date.now();
         const fileName = `${timestamp}_${file.name}`;
         const storageRef = ref(storage, `crafts/${userId}/${fileName}`);
         const snapshot = await uploadBytes(storageRef, file);
-        return await getDownloadURL(snapshot.ref);
+        const url = await getDownloadURL(snapshot.ref);
+        console.log(`✅ File ${index + 1} uploaded:`, url);
+        return url;
       });
 
       const urls = await Promise.all(uploadPromises);
+      console.log('🎉 All files uploaded successfully:', urls);
       setUploadedImages(urls);
       
       toast.success(`Uploaded ${files.length} photo${files.length !== 1 ? 's' : ''}!`);
       
-      // Auto-advance to voice step
-      setTimeout(() => {
-        setCurrentStep('voice');
-        startVoiceAssistant();
-      }, 1000);
+      // Show success message and next button instead of auto-advancing
+      // Users can now manually proceed when ready
       
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('❌ Upload error:', error);
       toast.error('Failed to upload photos. Please try again.');
+      // Reset state on error
+      setSelectedFiles([]);
+      setUploadedImages([]);
     }
   };
 
@@ -397,14 +405,102 @@ export function VoiceAssistantWorkflow({
           </div>
         )}
 
-        <div className="text-center">
-          <Button
-            variant="outline"
-            onClick={onCancel}
-            className="border-brown text-brown hover:bg-brown hover:text-cream"
-          >
-            Cancel
-          </Button>
+        {/* Upload success and next button */}
+        {uploadedImages.length > 0 && (
+          <div className="mb-6 text-center">
+            <div className="bg-green-50 rounded-lg p-4 mb-4 border border-green-200">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <Check className="w-5 h-5 text-green-600" />
+                <span className="font-medium text-green-800">
+                  {uploadedImages.length} photo{uploadedImages.length !== 1 ? 's' : ''} uploaded successfully!
+                </span>
+              </div>
+              <p className="text-sm text-green-700">
+                Ready to continue with voice description
+              </p>
+            </div>
+            
+            <Button
+              onClick={() => {
+                setCurrentStep('voice');
+                startVoiceAssistant();
+              }}
+              className="bg-gold hover:bg-gold-light text-charcoal px-8 py-3"
+              size="lg"
+            >
+              Continue to Voice Description
+              <Mic className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
+        )}
+
+        {/* Fallback next button - shows if files are selected but upload might have issues */}
+        {selectedFiles.length > 0 && uploadedImages.length === 0 && (
+          <div className="mb-6 text-center">
+            <div className="bg-blue-50 rounded-lg p-4 mb-4 border border-blue-200">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <Upload className="w-5 h-5 text-blue-600" />
+                <span className="font-medium text-blue-800">
+                  {selectedFiles.length} photo{selectedFiles.length !== 1 ? 's' : ''} selected
+                </span>
+              </div>
+              <p className="text-sm text-blue-700">
+                Photos are being processed. You can continue or wait for upload to complete.
+              </p>
+            </div>
+            
+            <div className="space-y-3">
+              <Button
+                onClick={() => {
+                  // Use selected files as fallback if upload URLs aren't ready
+                  if (uploadedImages.length === 0) {
+                    // Create temporary URLs for selected files
+                    const tempUrls = selectedFiles.map(file => URL.createObjectURL(file));
+                    setUploadedImages(tempUrls);
+                  }
+                  setCurrentStep('voice');
+                  startVoiceAssistant();
+                }}
+                className="bg-gold hover:bg-gold-light text-charcoal px-8 py-3"
+                size="lg"
+              >
+                Continue Anyway
+                <Mic className="w-5 h-5 ml-2" />
+              </Button>
+              
+              <p className="text-xs text-brown">
+                You can continue with voice description while photos finish uploading
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="text-center space-y-3">
+          <div className="flex justify-center space-x-4">
+            <Button
+              variant="outline"
+              onClick={onCancel}
+              className="border-brown text-brown hover:bg-brown hover:text-cream"
+            >
+              Cancel
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Allow proceeding without photos for testing
+                setCurrentStep('voice');
+                startVoiceAssistant();
+              }}
+              className="border-gold text-gold hover:bg-gold hover:text-charcoal"
+            >
+              Skip Photos (Demo)
+            </Button>
+          </div>
+          
+          <p className="text-xs text-brown">
+            For testing: You can skip photos and go directly to voice description
+          </p>
         </div>
       </div>
     );

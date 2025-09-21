@@ -1,0 +1,57 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUserData() {
+      return request.resource.data.keys().hasAll(['uid', 'role']) &&
+             request.resource.data.role in ['artisan', 'explorer'];
+    }
+
+    function isValidCraftData() {
+      return request.resource.data.keys().hasAll(['artisanId', 'title', 'description']) &&
+             request.resource.data.artisanId == request.auth.uid;
+    }
+
+    // Users collection - strict ownership
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserData();
+    }
+
+    // Artisans collection - read public, write own
+    match /artisans/{artisanId} {
+      allow read: if isAuthenticated();
+      allow write, create: if isOwner(artisanId);
+    }
+
+    // Explorers collection - read public, write own  
+    match /explorers/{explorerId} {
+      allow read: if isAuthenticated();
+      allow write, create: if isOwner(explorerId);
+    }
+
+    // Crafts collection - read public, write own only
+    match /crafts/{craftId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidCraftData();
+      allow update, delete: if isAuthenticated() && 
+                            resource.data.artisanId == request.auth.uid;
+    }
+
+    // For testing purposes only - allow broader access
+    // TODO: Remove this rule in production
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
